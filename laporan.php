@@ -1,0 +1,5 @@
+<?php $title="Laporan";include "config.php";include "header.php";
+$rows=$conn->query("SELECT t.*,COUNT(td.id) jumlah FROM transaksi t LEFT JOIN transaksi_detail td ON td.transaksi_id=t.id GROUP BY t.id ORDER BY t.id DESC");
+$sum=$conn->query("SELECT COALESCE(SUM(total),0) total,COUNT(*) jumlah FROM transaksi WHERE DATE(created_at)=CURDATE()")->fetch_assoc();?>
+<div class="row g-3 mb-3"><div class="col-md-6"><div class="card p-3 shadow-sm"><small>Penjualan Hari Ini</small><h3>Rp <?=number_format($sum["total"],0,",",".")?></h3></div></div><div class="col-md-6"><div class="card p-3 shadow-sm"><small>Jumlah Transaksi Hari Ini</small><h3><?=$sum["jumlah"]?></h3></div></div></div>
+<div class="card p-3 shadow-sm"><h4>📊 Riwayat Transaksi</h4><div class="table-responsive"><table class="table"><tr><th>Kode</th><th>Tanggal</th><th>Voucher</th><th>Total</th><th>Metode</th></tr><?php while($r=$rows->fetch_assoc()):?><tr><td><?=$r["kode_transaksi"]?></td><td><?=$r["created_at"]?></td><td><?=$r["jumlah"]?></td><td>Rp <?=number_format($r["total"],0,",",".")?></td><td><?=$r["metode"]?></td></tr><?php endwhile;?></table></div></div><?php include "footer.php";?>
